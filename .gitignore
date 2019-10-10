@@ -211,3 +211,7 @@ ENV/
 env.bak/
 venv.bak/
 pip-selfcheck.json
+
+### Database ###
+bot.db
+bot.db-journal
