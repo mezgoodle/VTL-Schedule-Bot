@@ -15,7 +15,7 @@ def handle_start(message):
 @bot.message_handler(commands=['stop'])
 def handle_stop(message):
     hide_markup = telebot.types.ReplyKeyboardRemove()
-    bot.send_message(message.from_user.id, '..', reply_markup=hide_markup)
+    bot.send_message(message.from_user.id, 'Клавіатуру вимкнено', reply_markup=hide_markup)
 
 @bot.message_handler(commands=['help'])
 def handle_text(message):
@@ -24,10 +24,24 @@ def handle_text(message):
 /tomorrow - Розклад на завтра
 /week - Розклад на тиждень
 /nextweek - Розклад на наступний тиждень
-/help - Список усіх команж
-/timatable - Розклад дзвінків
+/help - Список усіх команд
+/timetable - Розклад дзвінків
 /who - Підказує ім'я вчителя
 /group - Встановити групу
+/stop - Вимкнути клавіатуру
+    """)
+
+@bot.message_handler(commands=['timetable'])
+def handle_timetable(message):
+    bot.send_message(message.chat.id, """
+        1. 08.30 - 09.15
+2. 09.25 - 10.10
+3. 10.20 - 11.05
+4. 11.20 - 12.05
+5. 12.25 - 13.10
+6. 13.30 - 14.15
+7. 14.25 - 15.10
+8. 15.15 - 16.00
     """)
 
 # @bot.message_handler(content_types=["text"])
