@@ -1,7 +1,9 @@
 import telebot
+import sqlite3
+from bot.config import TG_TOKEN, database
 
-from bot.config import TG_TOKEN
-
+conn = sqlite3.connect(database)
+print(conn)
 bot = telebot.TeleBot(TG_TOKEN)
 
 @bot.message_handler(commands=['start'])
