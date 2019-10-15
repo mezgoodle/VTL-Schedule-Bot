@@ -215,3 +215,4 @@ pip-selfcheck.json
 ### Database ###
 bot.db
 bot.db-journal
+bot/db.py
