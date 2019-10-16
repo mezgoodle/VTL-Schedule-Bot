@@ -216,3 +216,4 @@ pip-selfcheck.json
 bot.db
 bot.db-journal
 bot/db.py
+bot/teachers` name.py
