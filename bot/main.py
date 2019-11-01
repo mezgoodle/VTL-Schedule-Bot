@@ -3,7 +3,12 @@ import sqlite3
 from bot.config import TG_TOKEN, database
 
 conn = sqlite3.connect(database)
+cursor = conn.cursor()
+sql = "SELECT * FROM schedule WHERE group_name=?"
+cursor.execute(sql, [('pn1')])
+print(cursor.fetchall())
 print(conn)
+
 bot = telebot.TeleBot(TG_TOKEN)
 
 # Group dictionary
@@ -72,21 +77,11 @@ def handle_timetable(message):
 
 @bot.message_handler(content_types=['text'])
 def handle_group(message):
-    #bot.send_message(message.chat.id, str(type(message.text))) DEBUG
     if str(message.text)[-1].isdigit():
         bot.send_message(message.chat.id, GROUP_DICT[message.text])
         print(GROUP_DICT[message.text])
     else:
         print('FALSE')
         bot.send_message(message.chat.id, 'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
-
-# @bot.message_handler(content_types=["text"])
-# def handle_text(message):
-#     if message.text == "a":
-#         bot.send_message(message.chat.id,"B")
-#     elif  message.text == "B":
-#         bot.send_message(message.chat.id, "a")
-#     else:
-#         bot.send_message(message.chat.id, "Lose")
 
 bot.polling(none_stop=True, interval=0)
