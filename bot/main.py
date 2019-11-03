@@ -1,13 +1,41 @@
 import telebot
 import sqlite3
 from bot.config import TG_TOKEN, database
+from datetime import datetime, date, time
 
-conn = sqlite3.connect(database)
-cursor = conn.cursor()
-sql = "SELECT * FROM schedule WHERE group_name=?"
-cursor.execute(sql, [('pn1')])
-print(cursor.fetchall())
-print(conn)
+# Connection to database
+
+# Datetime
+today = datetime.now()
+# print(today.strftime("%w"))
+
+# Group identification
+GROUP_ID = ''
+
+# Day`s name dictionary
+dayName_DICT = {
+    1: 'Понеділок',
+    2: 'Вівторок',
+    3: 'Середа',
+    4: 'Четвер',
+    5: "П`ятниця",
+}
+
+def today_schedule(message):
+    conn = sqlite3.connect(database)
+    cursor = conn.cursor()
+    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
+    cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
+    if today.strftime('%w') == '6' or today.strftime('%w') == '0':
+        bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
+    else:
+        string_d = dayName_DICT[int(today.strftime('%w'))] + '\n'
+        string = ''
+        for element in cursor.fetchall():
+            print(element)
+            string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
+        bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
+# print(conn)
 
 bot = telebot.TeleBot(TG_TOKEN)
 
@@ -28,9 +56,6 @@ GROUP_DICT = {
     '/group_ite3': 'ite3',
     '/group_itr4': 'itr4',
 }
-
-# Group identification
-GROUP_ID = ''
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
@@ -75,13 +100,25 @@ def handle_timetable(message):
 8. 15.15 - 16.00
     """)
 
+@bot.message_handler(commands=['today'])
+def handle_today(message):
+    today_schedule(message)
+
+@bot.message_handler(commands=['who'])
+def handle_today(message):
+    if int(today.strftime("%w")) < 5 or int(today.strftime("%w")) == 0:
+        bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
+    else:
+        print(cursor.fetchall())
+
 @bot.message_handler(content_types=['text'])
 def handle_group(message):
     if str(message.text)[-1].isdigit():
-        bot.send_message(message.chat.id, GROUP_DICT[message.text])
-        print(GROUP_DICT[message.text])
+        bot.send_message(message.chat.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[message.text])
+        global GROUP_ID
+        GROUP_ID = GROUP_DICT[message.text]
     else:
-        print('FALSE')
         bot.send_message(message.chat.id, 'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
+
 
 bot.polling(none_stop=True, interval=0)
