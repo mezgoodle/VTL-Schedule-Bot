@@ -55,7 +55,7 @@ def week_schedule(message):
     cursor = conn.cursor()
     sql = "SELECT * FROM schedule WHERE group_name=?"
     cursor.execute(sql, ([GROUP_ID]))
-    if today.strftime('%w') == '6' or today.strftime('%w') == '0':
+    if today.strftime('%w') == '6':
         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
     else:
         string_all = ''
