@@ -3,11 +3,8 @@ import sqlite3
 from bot.config import TG_TOKEN, database
 from datetime import datetime, date, time
 
-# Connection to database
-
 # Datetime
 today = datetime.now()
-# print(today.strftime("%w"))
 
 # Group identification
 GROUP_ID = ''
@@ -21,7 +18,9 @@ dayName_DICT = {
     5: "П`ятниця",
 }
 
+
 def today_schedule(message):
+    # Connection to database
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
@@ -32,10 +31,61 @@ def today_schedule(message):
         string_d = dayName_DICT[int(today.strftime('%w'))] + '\n'
         string = ''
         for element in cursor.fetchall():
-            print(element)
             string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
         bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
-# print(conn)
+
+def tomorrow_schedule(message):
+    # Connection to database
+    conn = sqlite3.connect(database)
+    cursor = conn.cursor()
+    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
+    cursor.execute(sql, (GROUP_ID, str(int(today.strftime('%w')) + 1)))
+    if str(int(today.strftime('%w')) + 1) == '6' or str(int(today.strftime('%w')) + 1) == '0':
+        bot.send_message(message.chat.id, 'Завтра вихідний\U0001F973, відпочивай!')
+    else:
+        string_d = dayName_DICT[int(today.strftime('%w')) + 1] + '\n'
+        string = ''
+        for element in cursor.fetchall():
+            string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
+        bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
+
+def week_schedule(message):
+    # Connection to database
+    conn = sqlite3.connect(database)
+    cursor = conn.cursor()
+    sql = "SELECT * FROM schedule WHERE group_name=?"
+    cursor.execute(sql, ([GROUP_ID]))
+    if today.strftime('%w') == '6' or today.strftime('%w') == '0':
+        bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
+    else:
+        string_all = ''
+        for i in range(1, 6):
+            string_all += dayName_DICT[i] + '\n'
+            string_all += one_day(i) + '\n'
+        bot.send_message(message.chat.id, string_all)
+
+def who_is_now(message):
+    conn = sqlite3.connect(database)
+    cursor = conn.cursor()
+    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
+    cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
+    late_time = time(16,0,0)
+    print(late_time)
+    print(today.time() > late_time, today.time() == late_time)
+    # print(cursor.fetchall()[i])
+
+def one_day(day_is):
+    conn = sqlite3.connect(database)
+    cursor = conn.cursor()
+    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
+    cursor.execute(sql, (GROUP_ID, day_is))
+    string = ''
+    for element in cursor.fetchall():
+        string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
+    return string
+
+# print(conn) For testing database connection
+
 
 bot = telebot.TeleBot(TG_TOKEN)
 
@@ -70,7 +120,8 @@ def handle_stop(message):
 
 @bot.message_handler(commands=['group'])
 def handle_group_damn(message):
-    bot.send_message(message.from_user.id, 'Для почтаку встанови код своєї групи(/group_[назва групи]), наприклад, /group_pm1.')
+    bot.send_message(message.from_user.id,
+                     'Для початку встанови код своєї групи(/group_[назва групи]), наприклад, /group_pm1.')
 
 @bot.message_handler(commands=['help'])
 def handle_text(message):
@@ -102,14 +153,40 @@ def handle_timetable(message):
 
 @bot.message_handler(commands=['today'])
 def handle_today(message):
-    today_schedule(message)
+    if GROUP_ID != '':
+        today_schedule(message)
+    else:
+        bot.send_message(message.chat.id,
+                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+
+@bot.message_handler(commands=['tomorrow'])
+def handle_tomorrow(message):
+    if GROUP_ID != '':
+        tomorrow_schedule(message)
+    else:
+        bot.send_message(message.chat.id,
+                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+
+@bot.message_handler(commands=['week'])
+def handle_week(message):
+    if GROUP_ID != '':
+        week_schedule(message)
+    else:
+        bot.send_message(message.chat.id,
+                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
 
 @bot.message_handler(commands=['who'])
-def handle_today(message):
-    if int(today.strftime("%w")) < 5 or int(today.strftime("%w")) == 0:
+def handle_who(message):
+    if GROUP_ID != '':
+        who_is_now(message)
+    elif today.strftime('%w') == '6' or today.strftime('%w') == '0':
         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
+    # elif:
+    #     print(today.time())
     else:
-        print(cursor.fetchall())
+        bot.send_message(message.chat.id,
+                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+
 
 @bot.message_handler(content_types=['text'])
 def handle_group(message):
@@ -118,7 +195,8 @@ def handle_group(message):
         global GROUP_ID
         GROUP_ID = GROUP_DICT[message.text]
     else:
-        bot.send_message(message.chat.id, 'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
+        bot.send_message(message.chat.id,
+                         'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
 
 
 bot.polling(none_stop=True, interval=0)
