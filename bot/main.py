@@ -98,8 +98,8 @@ def who_is_now(message):
             break
         i += 1
     if not flag:
-         bot.send_message(message.chat.id,
-                          'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
+        bot.send_message(message.chat.id,
+                         'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
 
 
 def one_day(day_is):
@@ -142,7 +142,9 @@ def handle_start(message):
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup.row('/today', '/tomorrow')
     bot.send_message(message.from_user.id,
-                     'Вітаємо! Це бот, що показує розклад по групам ВТЛ. Для почтаку встанови код своєї групи(/group_[назва групи]), наприклад, /group_pm1. Потім за допомогою клавіатури або команд дізнавайся, який у тебе зараз урок',
+                     'Вітаємо! Це бот, що показує розклад по групам ВТЛ. Для почтаку встанови код своєї групи('
+                     '/group_[назва групи]), наприклад, /group_pm1. Потім за допомогою клавіатури або команд '
+                     'дізнавайся, який у тебе зараз урок',
                      reply_markup=user_markup)
 
 
