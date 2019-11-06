@@ -43,6 +43,7 @@ def creation_string(data):
         string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
     return string
 
+
 def today_schedule(message):
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
@@ -91,7 +92,7 @@ def who_is_now(message):
     i = 0
     flag = False
     for timeInterval in TIME_ARRAY:
-        if today.time() >= timeInterval[0] and today.time() <= timeInterval[1]:
+        if timeInterval[0] <= today.time() <= timeInterval[1]:
             sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
             cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
             bot.send_message(message.chat.id, cursor.fetchall()[i][3])
