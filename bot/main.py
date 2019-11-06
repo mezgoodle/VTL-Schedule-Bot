@@ -82,16 +82,24 @@ def week_schedule(message):
 def who_is_now(message):
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
-    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
-    cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
     early_time = time(8, 0, 0)
     late_time = time(16, 0, 0)
-    print(late_time)
     if today.time() < early_time or today.time() > late_time:
         bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
-    print(today.time() < early_time, today.time() == early_time)
-    print(today.time() > late_time, today.time() == late_time)
-    # print(cursor.fetchall()[i])
+        return
+    i = 0
+    flag = False
+    for timeInterval in TIME_ARRAY:
+        if today.time() >= timeInterval[0] and today.time() <= timeInterval[1]:
+            sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
+            cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
+            bot.send_message(message.chat.id, cursor.fetchall()[i][3])
+            flag = True
+            break
+        i += 1
+    if not flag:
+         bot.send_message(message.chat.id,
+                          'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
 
 
 def one_day(day_is):
