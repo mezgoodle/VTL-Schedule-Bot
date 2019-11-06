@@ -18,6 +18,9 @@ dayName_DICT = {
     5: "П`ятниця",
 }
 
+# Books array
+BOOK_ARRAY = ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m']
+
 # Time Array
 TIME_ARRAY = [
     [time(8, 30, 0), time(9, 15, 0)],
@@ -231,7 +234,7 @@ def handle_who(message):
 
 @bot.message_handler(content_types=['text'])
 def handle_group(message):
-    if str(message.text)[-1].isdigit():
+    if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (str(message.text)[-2] in BOOK_ARRAY):
         bot.send_message(message.chat.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[message.text])
         global GROUP_ID
         GROUP_ID = GROUP_DICT[message.text]
