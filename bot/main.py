@@ -1,7 +1,7 @@
 import telebot
 import sqlite3
 from bot.config import TG_TOKEN, database
-from datetime import datetime, date, time
+from datetime import datetime, time
 
 # Datetime
 today = datetime.now()
@@ -17,6 +17,18 @@ dayName_DICT = {
     4: 'Четвер',
     5: "П`ятниця",
 }
+
+# Time Array
+TIME_ARRAY = [
+    [time(8, 30, 0), time(9, 15, 0)],
+    [time(9, 25, 0), time(10, 10, 0)],
+    [time(10, 20, 0), time(11, 5, 0)],
+    [time(11, 20, 0), time(12, 5, 0)],
+    [time(12, 25, 0), time(13, 10, 0)],
+    [time(13, 30, 0), time(14, 15, 0)],
+    [time(14, 25, 0), time(15, 10, 0)],
+    [time(15, 10, 0), time(16, 0, 0)],
+]
 
 
 def today_schedule(message):
@@ -34,6 +46,7 @@ def today_schedule(message):
             string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
         bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
 
+
 def tomorrow_schedule(message):
     # Connection to database
     conn = sqlite3.connect(database)
@@ -48,6 +61,7 @@ def tomorrow_schedule(message):
         for element in cursor.fetchall():
             string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
         bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
+
 
 def week_schedule(message):
     # Connection to database
@@ -64,15 +78,21 @@ def week_schedule(message):
             string_all += one_day(i) + '\n'
         bot.send_message(message.chat.id, string_all)
 
+
 def who_is_now(message):
     conn = sqlite3.connect(database)
     cursor = conn.cursor()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
-    late_time = time(16,0,0)
+    early_time = time(8, 0, 0)
+    late_time = time(16, 0, 0)
     print(late_time)
+    if today.time() < early_time or today.time() > late_time:
+        bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
+    print(today.time() < early_time, today.time() == early_time)
     print(today.time() > late_time, today.time() == late_time)
     # print(cursor.fetchall()[i])
+
 
 def one_day(day_is):
     conn = sqlite3.connect(database)
@@ -83,6 +103,7 @@ def one_day(day_is):
     for element in cursor.fetchall():
         string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
     return string
+
 
 # print(conn) For testing database connection
 
@@ -101,27 +122,33 @@ GROUP_DICT = {
     '/group_itn2': 'itn2',
     '/group_itn3': 'itn3',
     '/group_itn4': 'itn4',
-    '/group_pn1': 'pn1',
+    '/group_tpn1': 'tpn1',
     '/group_pn2': 'pn2',
     '/group_ite3': 'ite3',
     '/group_itr4': 'itr4',
 }
 
+
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup.row('/today', '/tomorrow')
-    bot.send_message(message.from_user.id, 'Вітаємо! Це бот, що показує розклад по групам ВТЛ. Для почтаку встанови код своєї групи(/group_[назва групи]), наприклад, /group_pm1. Потім за допомогою клавіатури або команд дізнавайся, який у тебе зараз урок', reply_markup=user_markup)
+    bot.send_message(message.from_user.id,
+                     'Вітаємо! Це бот, що показує розклад по групам ВТЛ. Для почтаку встанови код своєї групи(/group_[назва групи]), наприклад, /group_pm1. Потім за допомогою клавіатури або команд дізнавайся, який у тебе зараз урок',
+                     reply_markup=user_markup)
+
 
 @bot.message_handler(commands=['stop'])
 def handle_stop(message):
     hide_markup = telebot.types.ReplyKeyboardRemove()
     bot.send_message(message.from_user.id, 'Клавіатуру вимкнено', reply_markup=hide_markup)
 
+
 @bot.message_handler(commands=['group'])
 def handle_group_damn(message):
     bot.send_message(message.from_user.id,
                      'Для початку встанови код своєї групи(/group_[назва групи]), наприклад, /group_pm1.')
+
 
 @bot.message_handler(commands=['help'])
 def handle_text(message):
@@ -138,6 +165,7 @@ def handle_text(message):
 https://telegra.ph/Kodi-grup-dlya-vtl-schedule-bot-10-25 - Коди груп
     """)
 
+
 @bot.message_handler(commands=['timetable'])
 def handle_timetable(message):
     bot.send_message(message.chat.id, """
@@ -151,6 +179,7 @@ def handle_timetable(message):
 8. 15.15 - 16.00
     """)
 
+
 @bot.message_handler(commands=['today'])
 def handle_today(message):
     if GROUP_ID != '':
@@ -158,6 +187,7 @@ def handle_today(message):
     else:
         bot.send_message(message.chat.id,
                          'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+
 
 @bot.message_handler(commands=['tomorrow'])
 def handle_tomorrow(message):
@@ -167,6 +197,7 @@ def handle_tomorrow(message):
         bot.send_message(message.chat.id,
                          'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
 
+
 @bot.message_handler(commands=['week'])
 def handle_week(message):
     if GROUP_ID != '':
@@ -175,14 +206,13 @@ def handle_week(message):
         bot.send_message(message.chat.id,
                          'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
 
+
 @bot.message_handler(commands=['who'])
 def handle_who(message):
     if GROUP_ID != '':
+        if today.strftime('%w') == '6' or today.strftime('%w') == '0':
+            bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
         who_is_now(message)
-    elif today.strftime('%w') == '6' or today.strftime('%w') == '0':
-        bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
-    # elif:
-    #     print(today.time())
     else:
         bot.send_message(message.chat.id,
                          'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
