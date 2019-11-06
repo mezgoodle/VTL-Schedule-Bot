@@ -31,42 +31,44 @@ TIME_ARRAY = [
 ]
 
 
-def today_schedule(message):
+def connection_to_database():
     # Connection to database
     conn = sqlite3.connect(database)
-    cursor = conn.cursor()
+    return conn.cursor()
+
+
+def creation_string(data):
+    string = ''
+    for element in data:
+        string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
+    return string
+
+def today_schedule(message):
+    cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
     if today.strftime('%w') == '6' or today.strftime('%w') == '0':
         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
     else:
         string_d = dayName_DICT[int(today.strftime('%w'))] + '\n'
-        string = ''
-        for element in cursor.fetchall():
-            string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
+        string = creation_string(cursor.fetchall())
         bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
 
 
 def tomorrow_schedule(message):
-    # Connection to database
-    conn = sqlite3.connect(database)
-    cursor = conn.cursor()
+    cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID, str(int(today.strftime('%w')) + 1)))
     if str(int(today.strftime('%w')) + 1) == '6' or str(int(today.strftime('%w')) + 1) == '0':
         bot.send_message(message.chat.id, 'Завтра вихідний\U0001F973, відпочивай!')
     else:
         string_d = dayName_DICT[int(today.strftime('%w')) + 1] + '\n'
-        string = ''
-        for element in cursor.fetchall():
-            string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
+        string = creation_string(cursor.fetchall())
         bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
 
 
 def week_schedule(message):
-    # Connection to database
-    conn = sqlite3.connect(database)
-    cursor = conn.cursor()
+    cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=?"
     cursor.execute(sql, ([GROUP_ID]))
     if today.strftime('%w') == '6':
@@ -80,8 +82,7 @@ def week_schedule(message):
 
 
 def who_is_now(message):
-    conn = sqlite3.connect(database)
-    cursor = conn.cursor()
+    cursor = connection_to_database()
     early_time = time(8, 0, 0)
     late_time = time(16, 0, 0)
     if today.time() < early_time or today.time() > late_time:
@@ -103,8 +104,7 @@ def who_is_now(message):
 
 
 def one_day(day_is):
-    conn = sqlite3.connect(database)
-    cursor = conn.cursor()
+    cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID, day_is))
     string = ''
@@ -173,6 +173,7 @@ def handle_text(message):
 /group - Встановити групу
 /stop - Вимкнути клавіатуру
 https://telegra.ph/Kodi-grup-dlya-vtl-schedule-bot-10-25 - Коди груп
+Якщо у розкладі є неточності, пишіть @feedback_sch_vtl_bot
     """)
 
 
