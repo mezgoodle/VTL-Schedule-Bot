@@ -6,8 +6,8 @@ from datetime import datetime, time, timedelta
 # Datetime
 today = datetime.now()
 
-# Group identification
-GROUP_ID = ''
+# Group dictionary
+GROUP_ID = {}
 
 # Day`s name dictionary
 dayName_DICT = {
@@ -19,7 +19,8 @@ dayName_DICT = {
 }
 
 # Books array
-BOOK_ARRAY = ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m']
+BOOK_ARRAY = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x',
+              'c', 'v', 'b', 'n', 'm']
 
 # Time Array
 TIME_ARRAY = [
@@ -50,7 +51,7 @@ def creation_string(data):
 def today_schedule(message):
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
-    cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
+    cursor.execute(sql, (GROUP_ID[message.from_user.id], today.strftime('%w')))
     if today.strftime('%w') == '6' or today.strftime('%w') == '0':
         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
     else:
@@ -62,7 +63,7 @@ def today_schedule(message):
 def tomorrow_schedule(message):
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
-    cursor.execute(sql, (GROUP_ID, str(int(today.strftime('%w')) + 1)))
+    cursor.execute(sql, (GROUP_ID[message.from_user.id], str(int(today.strftime('%w')) + 1)))
     if str(int(today.strftime('%w')) + 1) == '6' or str(int(today.strftime('%w')) + 1) == '0':
         bot.send_message(message.chat.id, 'Завтра вихідний\U0001F973, відпочивай!')
     else:
@@ -74,14 +75,14 @@ def tomorrow_schedule(message):
 def week_schedule(message):
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=?"
-    cursor.execute(sql, ([GROUP_ID]))
+    cursor.execute(sql, ([GROUP_ID[message.from_user.id]]))
     if today.strftime('%w') == '6':
         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
     else:
         string_all = ''
         for i in range(1, 6):
             string_all += dayName_DICT[i] + '\n'
-            string_all += one_day(i) + '\n'
+            string_all += one_day(i, message) + '\n'
         bot.send_message(message.chat.id, string_all)
 
 
@@ -89,7 +90,7 @@ def who_is_now(message):
     cursor = connection_to_database()
     early_time = time(8, 0, 0)
     late_time = time(16, 0, 0)
-    current_time = datetime.now()# + timedelta(hours=2)
+    current_time = datetime.now()  # + timedelta(hours=2)
     # Only if you are goint to use PythonAnywhere service and if you are in Ukraine. For example, if i launch bot on
     # my localhost, I needn`t +2 hours to current time, and can use today.time()
     if current_time.time() < early_time or current_time.time() > late_time:
@@ -100,7 +101,7 @@ def who_is_now(message):
     for timeInterval in TIME_ARRAY:
         if timeInterval[0] <= current_time.time() <= timeInterval[1]:
             sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
-            cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
+            cursor.execute(sql, (GROUP_ID[message.from_user.id], today.strftime('%w')))
             data = cursor.fetchall()
             if data[0][4] != 2:
                 print(i)
@@ -115,10 +116,10 @@ def who_is_now(message):
                          'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
 
 
-def one_day(day_is):
+def one_day(day_is, message):
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
-    cursor.execute(sql, (GROUP_ID, day_is))
+    cursor.execute(sql, (GROUP_ID[message.from_user.id], day_is))
     string = ''
     for element in cursor.fetchall():
         string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
@@ -198,7 +199,9 @@ def handle_timetable(message):
 
 @bot.message_handler(commands=['today'])
 def handle_today(message):
-    if GROUP_ID != '':
+    if not message.from_user.id in GROUP_ID:
+        GROUP_ID[message.from_user.id] = ''
+    if GROUP_ID[message.from_user.id] != '':
         today_schedule(message)
     else:
         bot.send_message(message.chat.id,
@@ -207,7 +210,9 @@ def handle_today(message):
 
 @bot.message_handler(commands=['tomorrow'])
 def handle_tomorrow(message):
-    if GROUP_ID != '':
+    if not message.from_user.id in GROUP_ID:
+        GROUP_ID[message.from_user.id] = ''
+    if GROUP_ID[message.from_user.id] != '':
         tomorrow_schedule(message)
     else:
         bot.send_message(message.chat.id,
@@ -216,7 +221,9 @@ def handle_tomorrow(message):
 
 @bot.message_handler(commands=['week'])
 def handle_week(message):
-    if GROUP_ID != '':
+    if not message.from_user.id in GROUP_ID:
+        GROUP_ID[message.from_user.id] = ''
+    if GROUP_ID[message.from_user.id] != '':
         week_schedule(message)
     else:
         bot.send_message(message.chat.id,
@@ -225,7 +232,9 @@ def handle_week(message):
 
 @bot.message_handler(commands=['who'])
 def handle_who(message):
-    if GROUP_ID != '':
+    if not message.from_user.id in GROUP_ID:
+        GROUP_ID[message.from_user.id] = ''
+    if GROUP_ID[message.from_user.id] != '':
         if today.strftime('%w') == '6' or today.strftime('%w') == '0':
             bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
         who_is_now(message)
@@ -254,12 +263,13 @@ def handle_group(message):
 /group_itr4 - ІТР-4
     ''')
 
+
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (str(message.text)[-2] in BOOK_ARRAY):
+    if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (
+            str(message.text)[-2] in BOOK_ARRAY):
+        GROUP_ID[message.from_user.id] = GROUP_DICT[message.text]
         bot.send_message(message.chat.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[message.text])
-        global GROUP_ID
-        GROUP_ID = GROUP_DICT[message.text]
     else:
         bot.send_message(message.chat.id,
                          'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
