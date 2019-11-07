@@ -166,14 +166,8 @@ def handle_stop(message):
     bot.send_message(message.from_user.id, 'Клавіатуру вимкнено', reply_markup=hide_markup)
 
 
-@bot.message_handler(commands=['group'])
-def handle_group_damn(message):
-    bot.send_message(message.from_user.id,
-                     'Для початку встанови код своєї групи(/group_[назва групи]), наприклад, /group_pm1.')
-
-
 @bot.message_handler(commands=['help'])
-def handle_text(message):
+def handle_help(message):
     bot.send_message(message.chat.id, """
         /today - Розклад на сьогодні
 /tomorrow - Розклад на завтра
@@ -240,8 +234,28 @@ def handle_who(message):
                          'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(commands=['group'])
 def handle_group(message):
+    bot.send_message(message.chat.id, '''
+    Список груп:
+/group_pm1 - ФМН-1,
+/group_pm2 - ФМН-2,
+/group_pm3 - ФМН-3,
+/group_pm4 - ФМН-4,
+/group_lin3 - ЛІН-3,
+/group_lin4 - ЛІН-4,
+/group_itn1 - ІТН-1,
+/group_itn2 - ІТН-2,
+/group_itn3 - ІТН-3,
+/group_itn4 - ІТН-4,
+/group_tpn1 - ТПН-1,
+/group_pn2 - ПН-2,
+/group_ite3 - ІТЕ-3,
+/group_itr4 - ІТР-4
+    ''')
+
+@bot.message_handler(content_types=['text'])
+def handle_text(message):
     if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (str(message.text)[-2] in BOOK_ARRAY):
         bot.send_message(message.chat.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[message.text])
         global GROUP_ID
