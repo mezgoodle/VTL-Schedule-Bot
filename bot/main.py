@@ -1,7 +1,7 @@
 import telebot
 import sqlite3
 from bot.config import TG_TOKEN, database
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 # Datetime
 today = datetime.now()
@@ -89,16 +89,24 @@ def who_is_now(message):
     cursor = connection_to_database()
     early_time = time(8, 0, 0)
     late_time = time(16, 0, 0)
-    if today.time() < early_time or today.time() > late_time:
+    current_time = datetime.now()# + timedelta(hours=2)
+    # Only if you are goint to use PythonAnywhere service and if you are in Ukraine. For example, if i launch bot on
+    # my localhost, I needn`t +2 hours to current time, and can use today.time()
+    if current_time.time() < early_time or current_time.time() > late_time:
         bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
         return
     i = 0
     flag = False
     for timeInterval in TIME_ARRAY:
-        if timeInterval[0] <= today.time() <= timeInterval[1]:
+        if timeInterval[0] <= current_time.time() <= timeInterval[1]:
             sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
             cursor.execute(sql, (GROUP_ID, today.strftime('%w')))
-            bot.send_message(message.chat.id, cursor.fetchall()[i][3])
+            data = cursor.fetchall()
+            if data[0][4] != 2:
+                print(i)
+                bot.send_message(message.chat.id, data[i][3])
+            else:
+                bot.send_message(message.chat.id, data[i - 1][3])
             flag = True
             break
         i += 1
