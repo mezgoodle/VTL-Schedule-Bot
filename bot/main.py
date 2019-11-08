@@ -3,8 +3,11 @@ import sqlite3
 from bot.config import TG_TOKEN, database
 from datetime import datetime, time, timedelta
 
-# Datetime
-today = datetime.now()
+
+def take_date():
+    # Datetime
+    return datetime.now()
+
 
 # Group dictionary
 GROUP_ID = {}
@@ -49,6 +52,7 @@ def creation_string(data):
 
 
 def today_schedule(message):
+    today = take_date()
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID[message.from_user.id], today.strftime('%w')))
@@ -61,6 +65,7 @@ def today_schedule(message):
 
 
 def tomorrow_schedule(message):
+    today = take_date()
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID[message.from_user.id], str(int(today.strftime('%w')) + 1)))
@@ -73,6 +78,7 @@ def tomorrow_schedule(message):
 
 
 def week_schedule(message):
+    today = take_date()
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=?"
     cursor.execute(sql, ([GROUP_ID[message.from_user.id]]))
@@ -100,11 +106,15 @@ def who_is_now(message):
     flag = False
     for timeInterval in TIME_ARRAY:
         if timeInterval[0] <= current_time.time() <= timeInterval[1]:
+            today = take_date()
             sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
             cursor.execute(sql, (GROUP_ID[message.from_user.id], today.strftime('%w')))
             data = cursor.fetchall()
+            if len(data) < i:
+                bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
+                flag = True
+            break
             if data[0][4] != 2:
-                print(i)
                 bot.send_message(message.chat.id, data[i][3])
             else:
                 bot.send_message(message.chat.id, data[i - 1][3])
@@ -232,6 +242,7 @@ def handle_week(message):
 
 @bot.message_handler(commands=['who'])
 def handle_who(message):
+    today = take_date()
     if not message.from_user.id in GROUP_ID:
         GROUP_ID[message.from_user.id] = ''
     if GROUP_ID[message.from_user.id] != '':
