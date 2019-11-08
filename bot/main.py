@@ -103,7 +103,6 @@ def who_is_now(message):
         bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
         return
     i = 0
-    flag = False
     for timeInterval in TIME_ARRAY:
         if timeInterval[0] <= current_time.time() <= timeInterval[1]:
             today = take_date()
@@ -113,16 +112,14 @@ def who_is_now(message):
             if len(data) < i:
                 bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
                 flag = True
-            break
+                return
             if data[0][4] != 2:
                 bot.send_message(message.chat.id, data[i][3])
             else:
                 bot.send_message(message.chat.id, data[i - 1][3])
-            flag = True
-            break
+            return
         i += 1
-    if not flag:
-        bot.send_message(message.chat.id,
+    bot.send_message(message.chat.id,
                          'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
 
 
