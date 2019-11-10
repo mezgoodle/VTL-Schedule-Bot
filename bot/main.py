@@ -3,12 +3,6 @@ import sqlite3
 from bot.config import TG_TOKEN, database
 from datetime import datetime, time, timedelta
 
-
-def take_date():
-    # Datetime
-    return datetime.now()
-
-
 # Group dictionary
 GROUP_ID = {}
 
@@ -22,8 +16,7 @@ dayName_DICT = {
 }
 
 # Books array
-BOOK_ARRAY = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x',
-              'c', 'v', 'b', 'n', 'm']
+BOOK_ARRAY = ['e', 'r', 'n', 'm']
 
 # Time Array
 TIME_ARRAY = [
@@ -42,6 +35,11 @@ def connection_to_database():
     # Connection to database
     conn = sqlite3.connect(database)
     return conn.cursor()
+
+
+def take_date():
+    # Datetime
+    return datetime.now()
 
 
 def creation_string(data):
@@ -69,7 +67,7 @@ def tomorrow_schedule(message):
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID[message.from_user.id], str(int(today.strftime('%w')) + 1)))
-    if str(int(today.strftime('%w')) + 1) == '6' or str(int(today.strftime('%w')) + 1) == '0':
+    if str(int(today.strftime('%w')) + 1) == '6' or str(int(today.strftime('%w')) + 1) == '7':
         bot.send_message(message.chat.id, 'Завтра вихідний\U0001F973, відпочивай!')
     else:
         string_d = dayName_DICT[int(today.strftime('%w')) + 1] + '\n'
@@ -99,8 +97,11 @@ def who_is_now(message):
     current_time = datetime.now()  # + timedelta(hours=2)
     # Only if you are goint to use PythonAnywhere service and if you are in Ukraine. For example, if i launch bot on
     # my localhost, I needn`t +2 hours to current time, and can use today.time()
-    if current_time.time() < early_time or current_time.time() > late_time:
+    if current_time.time() > late_time:
         bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
+        return
+    elif current_time.time() < early_time:
+        bot.send_message(message.chat.id, 'Навчання ще не почалось, готуйся!\U0001F973')
         return
     i = 0
     for timeInterval in TIME_ARRAY:
@@ -111,7 +112,6 @@ def who_is_now(message):
             data = cursor.fetchall()
             if len(data) < i:
                 bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
-                flag = True
                 return
             if data[0][4] != 2:
                 bot.send_message(message.chat.id, data[i][3])
@@ -120,7 +120,7 @@ def who_is_now(message):
             return
         i += 1
     bot.send_message(message.chat.id,
-                         'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
+                     'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
 
 
 def one_day(day_is, message):
@@ -245,7 +245,8 @@ def handle_who(message):
     if GROUP_ID[message.from_user.id] != '':
         if today.strftime('%w') == '6' or today.strftime('%w') == '0':
             bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
-        who_is_now(message)
+        else:
+            who_is_now(message)
     else:
         bot.send_message(message.chat.id,
                          'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
