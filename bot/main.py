@@ -2,6 +2,7 @@ import telebot
 import sqlite3
 from bot.config import TG_TOKEN, database
 from datetime import datetime, time, timedelta
+from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 # Group dictionary
 GROUP_ID = {}
@@ -40,6 +41,29 @@ def connection_to_database():
 def take_date():
     # Datetime
     return datetime.now()
+
+
+# Generation InlineKeyboardMarkup
+def gen_markup():
+    markup = InlineKeyboardMarkup()
+    markup.row_width = 4
+    markup.add(
+        InlineKeyboardButton('ФМН-1', callback_data='/group_pm1'),
+        InlineKeyboardButton('ФМН-2', callback_data='/group_pm2'),
+        InlineKeyboardButton('ФМН-3', callback_data='/group_pm3'),
+        InlineKeyboardButton('ФМН-4', callback_data='/group_pm4'),
+        InlineKeyboardButton('ЛІН-3', callback_data='/group_lin3'),
+        InlineKeyboardButton('ЛІН-4', callback_data='/group_lin4'),
+        InlineKeyboardButton('ТПН-1', callback_data='/group_tpn1'),
+        InlineKeyboardButton('ПН-2', callback_data='/group_pn2'),
+        InlineKeyboardButton('ІТН-1', callback_data='/group_itn1'),
+        InlineKeyboardButton('ІТН-2', callback_data='/group_itn2'),
+        InlineKeyboardButton('ІТН-3', callback_data='/group_itn3'),
+        InlineKeyboardButton('ІТН-4', callback_data='/group_itn4'),
+        InlineKeyboardButton('ІТЕ-3', callback_data='/group_ite3'),
+        InlineKeyboardButton('ІТР-4', callback_data='/group_itr4'),
+    )
+    return markup
 
 
 def creation_string(data):
@@ -160,7 +184,7 @@ GROUP_DICT = {
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-    user_markup.row('/today', '/tomorrow')
+    user_markup.row('Сьогодні', "Завтра")
     bot.send_message(message.from_user.id,
                      'Вітаємо! Це бот, що показує розклад по групам ВТЛ. Для почтаку встанови код своєї групи('
                      '/group_[назва групи]), наприклад, /group_pm1. Потім за допомогою клавіатури або команд '
@@ -254,27 +278,17 @@ def handle_who(message):
 
 @bot.message_handler(commands=['group'])
 def handle_group(message):
-    bot.send_message(message.chat.id, '''
-    Список груп:
-/group_pm1 - ФМН-1,
-/group_pm2 - ФМН-2,
-/group_pm3 - ФМН-3,
-/group_pm4 - ФМН-4,
-/group_lin3 - ЛІН-3,
-/group_lin4 - ЛІН-4,
-/group_itn1 - ІТН-1,
-/group_itn2 - ІТН-2,
-/group_itn3 - ІТН-3,
-/group_itn4 - ІТН-4,
-/group_tpn1 - ТПН-1,
-/group_pn2 - ПН-2,
-/group_ite3 - ІТЕ-3,
-/group_itr4 - ІТР-4
-    ''')
+    bot.send_message(message.chat.id, 'Натисніть і оберіть вашу групу:', reply_markup=gen_markup())
 
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
+    if message.text == 'Сьогодні':
+        handle_today(message)
+        return
+    elif message.text == 'Завтра':
+        handle_tomorrow(message)
+        return
     if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (
             str(message.text)[-2] in BOOK_ARRAY):
         GROUP_ID[message.from_user.id] = GROUP_DICT[message.text]
@@ -282,6 +296,12 @@ def handle_text(message):
     else:
         bot.send_message(message.chat.id,
                          'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_handle(call):
+    bot.answer_callback_query(call.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[call.data])
+    GROUP_ID[call.message.chat.id] = GROUP_DICT[call.data]
 
 
 bot.polling(none_stop=True, interval=0)
