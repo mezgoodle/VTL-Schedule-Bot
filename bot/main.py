@@ -161,16 +161,15 @@ def one_day(day_is, message):
 
 def detect_time():
     today = take_date()
-    if today.time() < early_time:
-        return 'Навчання ще не почалось, готуйся!\U0001F973'
-    elif today.time() > late_time:
-        return 'Навчання вже закінчилось, відпочивай!\U0001F601'
+    # if today.time() < early_time:
+    #     return 'Навчання ще не почалось, готуйся!\U0001F973'
+    # elif today.time() > late_time:
+    #     return 'Навчання вже закінчилось, відпочивай!\U0001F601'
     for timeInterval in TIME_ARRAY:
         if timeInterval[0] <= today.time() <= timeInterval[1]:
-            return [timeInterval[1].minute - today.time().minute, timeInterval[1].second - today.time().second, 'уроку']
+            return [abs(today.time().minute - timeInterval[1].minute), 'уроку']
         if timeInterval[2] <= today.time() <= timeInterval[3]:
-            return [timeInterval[1].minute - today.time().minute, timeInterval[1].second - today.time().second,
-                    'перерви']
+            return [abs(today.time().minute - timeInterval[3].minute), 'перерви']
 
 
 # print(conn) For testing database connection
@@ -301,10 +300,10 @@ def handle_group(message):
 @bot.message_handler(commands=['left'])
 def handle_left(message):
     result = detect_time()
-    if type(result) == type('str'):
+    if isinstance(result, str):
         bot.send_message(message.chat.id, result)
     else:
-        bot.send_message(message.chat.id, f'До кінця {result[2]} {result[0]} хвилин і {result[1]} секунд')
+        bot.send_message(message.chat.id, f'До кінця {result[1]} {result[0]} хв.')
 
 
 @bot.message_handler(content_types=['text'])
