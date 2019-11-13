@@ -21,15 +21,19 @@ BOOK_ARRAY = ['e', 'r', 'n', 'm']
 
 # Time Array
 TIME_ARRAY = [
-    [time(8, 30, 0), time(9, 15, 0)],
-    [time(9, 25, 0), time(10, 10, 0)],
-    [time(10, 20, 0), time(11, 5, 0)],
-    [time(11, 20, 0), time(12, 5, 0)],
-    [time(12, 25, 0), time(13, 10, 0)],
-    [time(13, 30, 0), time(14, 15, 0)],
-    [time(14, 25, 0), time(15, 10, 0)],
-    [time(15, 10, 0), time(16, 0, 0)],
+    [time(8, 30, 0), time(9, 15, 0), time(9, 15, 0), time(9, 25, 0)],
+    [time(9, 25, 0), time(10, 10, 0), time(10, 10, 0), time(10, 20, 0)],
+    [time(10, 20, 0), time(11, 5, 0), time(11, 5, 0), time(11, 20, 0)],
+    [time(11, 20, 0), time(12, 5, 0), time(12, 5, 0), time(12, 25, 0)],
+    [time(12, 25, 0), time(13, 10, 0), time(13, 10, 0), time(13, 30, 0)],
+    [time(13, 30, 0), time(14, 15, 0), time(14, 15, 0), time(14, 25, 0)],
+    [time(14, 25, 0), time(15, 10, 0), time(15, 10, 0), time(15, 15, 0)],
+    [time(15, 15, 0), time(16, 0, 0)],
 ]
+
+# Time borders
+early_time = time(8, 0, 0)
+late_time = time(16, 0, 0)
 
 
 def connection_to_database():
@@ -114,11 +118,9 @@ def week_schedule(message):
         bot.send_message(message.chat.id, string_all)
 
 
-def who_is_now(message):
+def who_is_now(message, today):
     cursor = connection_to_database()
-    early_time = time(8, 0, 0)
-    late_time = time(16, 0, 0)
-    current_time = datetime.now()  # + timedelta(hours=2)
+    current_time = today  # + timedelta(hours=2)
     # Only if you are goint to use PythonAnywhere service and if you are in Ukraine. For example, if i launch bot on
     # my localhost, I needn`t +2 hours to current time, and can use today.time()
     if current_time.time() > late_time:
@@ -155,6 +157,20 @@ def one_day(day_is, message):
     for element in cursor.fetchall():
         string += str(element[4]) + ' - ' + element[2] + ', ' + element[3] + ', ' + element[1] + '\n'
     return string
+
+
+def detect_time():
+    today = take_date()
+    if today.time() < early_time:
+        return 'Навчання ще не почалось, готуйся!\U0001F973'
+    elif today.time() > late_time:
+        return 'Навчання вже закінчилось, відпочивай!\U0001F601'
+    for timeInterval in TIME_ARRAY:
+        if timeInterval[0] <= today.time() <= timeInterval[1]:
+            return [timeInterval[1].minute - today.time().minute, timeInterval[1].second - today.time().second, 'уроку']
+        if timeInterval[2] <= today.time() <= timeInterval[3]:
+            return [timeInterval[1].minute - today.time().minute, timeInterval[1].second - today.time().second,
+                    'перерви']
 
 
 # print(conn) For testing database connection
@@ -270,7 +286,7 @@ def handle_who(message):
         if today.strftime('%w') == '6' or today.strftime('%w') == '0':
             bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
         else:
-            who_is_now(message)
+            who_is_now(message, today)
     else:
         bot.send_message(message.chat.id,
                          'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
@@ -279,6 +295,16 @@ def handle_who(message):
 @bot.message_handler(commands=['group'])
 def handle_group(message):
     bot.send_message(message.chat.id, 'Натисніть і оберіть вашу групу:', reply_markup=gen_markup())
+
+
+# This function is only in test version. Real bot works without it
+@bot.message_handler(commands=['left'])
+def handle_left(message):
+    result = detect_time()
+    if type(result) == type('str'):
+        bot.send_message(message.chat.id, result)
+    else:
+        bot.send_message(message.chat.id, f'До кінця {result[2]} {result[0]} хвилин і {result[1]} секунд')
 
 
 @bot.message_handler(content_types=['text'])
