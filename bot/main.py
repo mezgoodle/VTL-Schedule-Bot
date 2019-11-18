@@ -143,6 +143,8 @@ def who_is_now(message, today):
             except IndexError:
                 if data[0][4] == 2:
                     bot.send_message(message.chat.id, data[i - 1][3])
+                elif i == 7:
+                    bot.send_message(message.chat.id, 'Не знаєш ім\'я свого класного керівника?')
                 else:
                     bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
             except:
