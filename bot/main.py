@@ -121,7 +121,7 @@ def week_schedule(message):
 def who_is_now(message, today):
     cursor = connection_to_database()
     current_time = today  # + timedelta(hours=2)
-    # Only if you are goint to use PythonAnywhere service and if you are in Ukraine. For example, if i launch bot on
+    # Only if you are going to use PythonAnywhere service and if you are in Ukraine. For example, if I launch bot on
     # my localhost, I needn`t +2 hours to current time, and can use today.time()
     if current_time.time() > late_time:
         bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
@@ -132,17 +132,21 @@ def who_is_now(message, today):
     i = 0
     for timeInterval in TIME_ARRAY:
         if timeInterval[0] <= current_time.time() <= timeInterval[1]:
-            today = take_date()
             sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
-            cursor.execute(sql, (GROUP_ID[message.from_user.id], today.strftime('%w')))
+            cursor.execute(sql, (GROUP_ID[message.from_user.id], current_time.strftime('%w')))
             data = cursor.fetchall()
-            if len(data) < i:
-                bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
-                return
-            if data[0][4] != 2:
-                bot.send_message(message.chat.id, data[i][3])
-            else:
-                bot.send_message(message.chat.id, data[i - 1][3])
+            try:
+                if data[0][4] != 2:
+                    bot.send_message(message.chat.id, data[i][3])
+                else:
+                    bot.send_message(message.chat.id, data[i - 1][3])
+            except IndexError:
+                if data[0][4] == 2:
+                    bot.send_message(message.chat.id, data[i - 1][3])
+                else:
+                    bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
+            except:
+                bot.send_message(message.chat.id, 'Ця функція наразі на стадії доопрацювання, спробуйте пізніше')
             return
         i += 1
     bot.send_message(message.chat.id,
