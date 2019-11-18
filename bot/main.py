@@ -120,6 +120,7 @@ def week_schedule(message):
 
 def who_is_now(message, today):
     cursor = connection_to_database()
+    print(type(today.strftime('%w')))
     current_time = today  # + timedelta(hours=2)
     # Only if you are going to use PythonAnywhere service and if you are in Ukraine. For example, if I launch bot on
     # my localhost, I needn`t +2 hours to current time, and can use today.time()
@@ -141,9 +142,7 @@ def who_is_now(message, today):
                 else:
                     bot.send_message(message.chat.id, data[i - 1][3])
             except IndexError:
-                if data[0][4] == 2:
-                    bot.send_message(message.chat.id, data[i - 1][3])
-                elif i == 7:
+                if i == 7 and current_time.strftime('%w') == '5':
                     bot.send_message(message.chat.id, 'Не знаєш ім\'я свого класного керівника?')
                 else:
                     bot.send_message(message.chat.id, 'Навчання вже закінчилось, відпочивай!\U0001F973')
