@@ -1,8 +1,10 @@
-import telebot
 import sqlite3
-from bot.config import TG_TOKEN, database
-from datetime import datetime, time, timedelta
+from datetime import datetime, time
+
+import telebot
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from bot.config import TG_TOKEN, database
 
 # Group dictionary
 GROUP_ID = {}
@@ -16,8 +18,8 @@ dayName_DICT = {
     5: "П`ятниця",
 }
 
-# Books array
-BOOK_ARRAY = ['e', 'r', 'n', 'm']
+# Letters array
+LETTERS_ARRAY = ['e', 'r', 'n', 'm']
 
 # Time Array
 TIME_ARRAY = [
@@ -36,14 +38,14 @@ early_time = time(8, 0, 0)
 late_time = time(16, 0, 0)
 
 
+# Connection to database
 def connection_to_database():
-    # Connection to database
     conn = sqlite3.connect(database)
     return conn.cursor()
 
 
+# Datetime
 def take_date():
-    # Datetime
     return datetime.now()
 
 
@@ -70,6 +72,7 @@ def gen_markup():
     return markup
 
 
+# Need for making answer for schedule row
 def creation_string(data):
     string = ''
     for element in data:
@@ -77,6 +80,7 @@ def creation_string(data):
     return string
 
 
+# Today schedule function
 def today_schedule(message):
     today = take_date()
     cursor = connection_to_database()
@@ -90,6 +94,7 @@ def today_schedule(message):
         bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
 
 
+# Tomorrow schedule function
 def tomorrow_schedule(message):
     today = take_date()
     cursor = connection_to_database()
@@ -103,6 +108,7 @@ def tomorrow_schedule(message):
         bot.send_message(message.chat.id, f"*{string_d}*" + string, parse_mode='Markdown')
 
 
+# Week schedule function
 def week_schedule(message):
     today = take_date()
     cursor = connection_to_database()
@@ -118,6 +124,7 @@ def week_schedule(message):
         bot.send_message(message.chat.id, string_all)
 
 
+# Teacher`s name function
 def who_is_now(message, today):
     cursor = connection_to_database()
     print(type(today.strftime('%w')))
@@ -154,6 +161,7 @@ def who_is_now(message, today):
                      'Напевно, зараз перерва. Сходи в їдальню та готуйся до наступного уроку\U0001F642')
 
 
+# Helpful function for 'week' function
 def one_day(day_is, message):
     cursor = connection_to_database()
     sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
@@ -164,22 +172,30 @@ def one_day(day_is, message):
     return string
 
 
+# Remainder time function
 def detect_time():
     today = take_date()
-    # if today.time() < early_time:
-    #     return 'Навчання ще не почалось, готуйся!\U0001F973'
-    # elif today.time() > late_time:
-    #     return 'Навчання вже закінчилось, відпочивай!\U0001F601'
+    if today.time() < early_time:
+        return 'Навчання ще не почалось, готуйся!\U0001F973'
+    elif today.time() > late_time:
+        return 'Навчання вже закінчилось, відпочивай!\U0001F601'
+    now = today.hour * 3600 + today.minute * 60 + today.second
     for timeInterval in TIME_ARRAY:
         if timeInterval[0] <= today.time() <= timeInterval[1]:
-            return [abs(today.time().minute - timeInterval[1].minute), 'уроку']
+            upper_time = timeInterval[1].hour * 3600 + timeInterval[1].minute * 60 + timeInterval[1].second
+            minutes = int((upper_time - now) / 60)
+            seconds = (upper_time - now) - minutes * 60
+            return [minutes, seconds, 'уроку']
         if timeInterval[2] <= today.time() <= timeInterval[3]:
-            return [abs(today.time().minute - timeInterval[3].minute), 'перерви']
+            upper_time = timeInterval[3].hour * 3600 + timeInterval[3].minute * 60 + timeInterval[3].second
+            minutes = int((upper_time - now) / 60)
+            seconds = (upper_time - now) - minutes * 60
+            return [minutes, seconds, 'перерви']
 
 
 # print(conn) For testing database connection
 
-
+# Take bot`s token
 bot = telebot.TeleBot(TG_TOKEN)
 
 # Group dictionary
@@ -308,7 +324,7 @@ def handle_left(message):
     if isinstance(result, str):
         bot.send_message(message.chat.id, result)
     else:
-        bot.send_message(message.chat.id, f'До кінця {result[1]} {result[0]} хв.')
+        bot.send_message(message.chat.id, f'До кінця {result[2]} {result[0]} хв., {result[1]} сек.')
 
 
 @bot.message_handler(content_types=['text'])
@@ -320,7 +336,7 @@ def handle_text(message):
         handle_tomorrow(message)
         return
     if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (
-            str(message.text)[-2] in BOOK_ARRAY):
+            str(message.text)[-2] in LETTERS_ARRAY):
         GROUP_ID[message.from_user.id] = GROUP_DICT[message.text]
         bot.send_message(message.chat.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[message.text])
     else:
@@ -334,4 +350,5 @@ def callback_handle(call):
     GROUP_ID[call.message.chat.id] = GROUP_DICT[call.data]
 
 
+# The work of the bot itself
 bot.polling(none_stop=True, interval=0)
