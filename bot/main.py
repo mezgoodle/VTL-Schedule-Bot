@@ -244,6 +244,7 @@ def handle_help(message):
 /timetable - Розклад дзвінків
 /who - Підказує ім'я вчителя
 /group - Встановити групу
+/left - Показує скільки залишилось до кінця уроку(перерви)
 /stop - Вимкнути клавіатуру
 https://telegra.ph/Kodi-grup-dlya-vtl-schedule-bot-10-25 - Коди груп
 Якщо у розкладі є неточності, пишіть @feedback_sch_vtl_bot
@@ -317,7 +318,6 @@ def handle_group(message):
     bot.send_message(message.chat.id, 'Натисніть і оберіть вашу групу:', reply_markup=gen_markup())
 
 
-# This function is only in test version. Real bot works without it
 @bot.message_handler(commands=['left'])
 def handle_left(message):
     result = detect_time()
