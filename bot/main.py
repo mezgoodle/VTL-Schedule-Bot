@@ -34,7 +34,7 @@ TIME_ARRAY = [
 ]
 
 # Time borders
-early_time = time(8, 0, 0)
+early_time = time(8, 30, 0)
 late_time = time(16, 0, 0)
 
 
@@ -80,11 +80,14 @@ def creation_string(data):
     return string
 
 
+# First 'sql' variable template
+sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
+
+
 # Today schedule function
 def today_schedule(message):
     today = take_date()
     cursor = connection_to_database()
-    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID[message.from_user.id], today.strftime('%w')))
     if today.strftime('%w') == '6' or today.strftime('%w') == '0':
         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
@@ -98,7 +101,6 @@ def today_schedule(message):
 def tomorrow_schedule(message):
     today = take_date()
     cursor = connection_to_database()
-    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID[message.from_user.id], str(int(today.strftime('%w')) + 1)))
     if str(int(today.strftime('%w')) + 1) == '6' or str(int(today.strftime('%w')) + 1) == '7':
         bot.send_message(message.chat.id, 'Завтра вихідний\U0001F973, відпочивай!')
@@ -140,7 +142,6 @@ def who_is_now(message, today):
     i = 0
     for timeInterval in TIME_ARRAY:
         if timeInterval[0] <= current_time.time() <= timeInterval[1]:
-            sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
             cursor.execute(sql, (GROUP_ID[message.from_user.id], current_time.strftime('%w')))
             data = cursor.fetchall()
             try:
@@ -164,7 +165,6 @@ def who_is_now(message, today):
 # Helpful function for 'week' function
 def one_day(day_is, message):
     cursor = connection_to_database()
-    sql = "SELECT * FROM schedule WHERE group_name=? AND day_is=?"
     cursor.execute(sql, (GROUP_ID[message.from_user.id], day_is))
     string = ''
     for element in cursor.fetchall():
