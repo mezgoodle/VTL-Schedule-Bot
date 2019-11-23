@@ -10,7 +10,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install require
 pip install -r requirements.txt
 ```
 ## Stable commit
-**c9a89f** or **c9a89fb6c67378b4dcc15625ee546c682807ce99**
+**08f999** or **08f999a3278bbdb1d050610ecdd4aa6a556770c3**
 
 ## Contact
 If you have questions write me here: 
