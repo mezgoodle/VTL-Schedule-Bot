@@ -49,6 +49,14 @@ def take_date():
     return datetime.now()
 
 
+# Check if today is weekend
+def check_today(today):
+    today = today
+    if today.strftime('%w') == '6' or today.strftime('%w') == '0':
+        return True
+    else:
+        return False
+
 # Generation InlineKeyboardMarkup
 def gen_markup():
     markup = InlineKeyboardMarkup()
@@ -89,7 +97,7 @@ def today_schedule(message):
     today = take_date()
     cursor = connection_to_database()
     cursor.execute(sql, (GROUP_ID[message.from_user.id], today.strftime('%w')))
-    if today.strftime('%w') == '6' or today.strftime('%w') == '0':
+    if check_today(today):
         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
     else:
         string_d = dayName_DICT[int(today.strftime('%w'))] + '\n'
@@ -304,7 +312,7 @@ def handle_who(message):
     if not message.from_user.id in GROUP_ID:
         GROUP_ID[message.from_user.id] = ''
     if GROUP_ID[message.from_user.id] != '':
-        if today.strftime('%w') == '6' or today.strftime('%w') == '0':
+        if check_today(today):
             bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
         else:
             who_is_now(message, today)
@@ -320,6 +328,10 @@ def handle_group(message):
 
 @bot.message_handler(commands=['left'])
 def handle_left(message):
+    today = take_date()
+    if check_today(today):
+        bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
+        return
     result = detect_time()
     if isinstance(result, str):
         bot.send_message(message.chat.id, result)
