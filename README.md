@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 3. Create file *config.py*
 
-4. Insert your Telegram bot`s token and path to your database like:
+4. Insert your Telegram bot`s token and path to your database in *config.py* like:
 ```python
 TG_TOKEN = "YOUR TOKEN HERE"
 database = "PATH TO DATABASE HERE"
