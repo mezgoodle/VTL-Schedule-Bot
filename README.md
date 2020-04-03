@@ -29,6 +29,6 @@ database = "PATH TO DATABASE HERE"
 
 ## Contact
 If you have questions write me here: 
-  * [Telegram](https://t.me/sylvenis)
-  * [Gmail](mailto:mezgoodle@gmail.com)
-  * [Facebook](https://www.facebook.com/profile.php?id=100005721694357)
+  *   [Telegram](https://t.me/sylvenis)
+  *   [Gmail](mailto:mezgoodle@gmail.com)
+  *   [Facebook](https://www.facebook.com/profile.php?id=100005721694357)
