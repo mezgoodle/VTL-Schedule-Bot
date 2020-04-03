@@ -24,8 +24,6 @@ TG_TOKEN = "YOUR TOKEN HERE"
 database = "PATH TO DATABASE HERE"
 ```
 
-
-
 ## Stable commit
 **08f999** or **08f999a3278bbdb1d050610ecdd4aa6a556770c3**
 
