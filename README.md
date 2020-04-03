@@ -1,5 +1,7 @@
 # Introduction
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a7c991330e3e4284b977f7ca39731acc)](https://www.codacy.com/manual/mezgoodle/VTL-Schedule-Bot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mezgoodle/VTL-Schedule-Bot&amp;utm_campaign=Badge_Grade)
+
 Welcome to this repository. Here you can view and download the bot code for the Telegram for your needs. The bot needs a token, which you can get in the Telegram, and your own database, which you must create yourself.
 
 ## Usage
