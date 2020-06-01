@@ -1,10 +1,9 @@
 import sqlite3
 from datetime import datetime, time
+from config import TG_TOKEN, database
 
 import telebot
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
-
-from bot.config import TG_TOKEN, database
 
 # Group dictionary
 GROUP_ID = {}
