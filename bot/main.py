@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime, time
 from config import TG_TOKEN, database
+from flask import Flask, request
 
 import telebot
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -136,7 +137,6 @@ def week_schedule(message):
 # Teacher`s name function
 def who_is_now(message, today):
     cursor = connection_to_database()
-    print(type(today.strftime('%w')))
     current_time = today  # + timedelta(hours=2)
     # Only if you are going to use PythonAnywhere service and if you are in Ukraine. For example, if I launch bot on
     # my localhost, I needn`t +2 hours to current time, and can use today.time()
@@ -202,8 +202,6 @@ def detect_time():
 
 # print(conn) For testing database connection
 
-# Take bot`s token
-bot = telebot.TeleBot(TG_TOKEN)
 
 # Group dictionary
 GROUP_DICT = {
@@ -361,5 +359,30 @@ def callback_handle(call):
     GROUP_ID[call.message.chat.id] = GROUP_DICT[call.data]
 
 
+# Take bot`s token
+bot = telebot.TeleBot(TG_TOKEN)
+# ==============
+server = Flask(__name__)
+
+
+@server.route('/' + TG_TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://vtl-schedule-bot.herokuapp.com/' + TG_TOKEN)
+    return "!", 200
+
+
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+# For production
+# ==============
+
 # The work of the bot itself
-bot.polling(none_stop=True, interval=0)
+# For development
+# bot.polling(none_stop=True, interval=0)
