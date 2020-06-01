@@ -50,7 +50,6 @@ def connection_to_database():
 
 # Datetime
 def take_date():
-    print(datetime.now() + timedelta(hours=3))
     return datetime.now() + timedelta(hours=3)
 
 
