@@ -1,4 +1,3 @@
-/bot/config.py
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -211,10 +210,3 @@ ENV/
 env.bak/
 venv.bak/
 pip-selfcheck.json
-
-### Database ###
-bot.db
-bot.db-journal
-bot/db.py
-bot/teachers` name.py
-/bot/Redatabase.py
