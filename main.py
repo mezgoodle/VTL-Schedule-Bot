@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from util.config import TG_TOKEN, database
 from flask import Flask, request
 
@@ -50,13 +50,12 @@ def connection_to_database():
 
 # Datetime
 def take_date():
-    print(datetime.now())
-    return datetime.now()
+    print(datetime.now() + timedelta(hours=3))
+    return datetime.now() + timedelta(hours=3)
 
 
 # Check if today is weekend
 def check_today(today):
-    today = today
     if today.strftime('%w') == '6' or today.strftime('%w') == '0':
         return True
     else:
