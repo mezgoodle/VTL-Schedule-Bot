@@ -1,10 +1,13 @@
 import sqlite3
 from datetime import datetime, time
-from config import TG_TOKEN, database
+from util.config import TG_TOKEN, database
 from flask import Flask, request
 
 import telebot
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+# Take bot`s token
+bot = telebot.TeleBot(TG_TOKEN)
 
 # Group dictionary
 GROUP_ID = {}
@@ -359,30 +362,28 @@ def callback_handle(call):
     GROUP_ID[call.message.chat.id] = GROUP_DICT[call.data]
 
 
-# Take bot`s token
-bot = telebot.TeleBot(TG_TOKEN)
 # ==============
-server = Flask(__name__)
+# server = Flask(__name__)
 
 
-@server.route('/' + TG_TOKEN, methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
+# @server.route('/' + TG_TOKEN, methods=['POST'])
+# def getMessage():
+#     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+#     return "!", 200
 
 
-@server.route("/")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://vtl-schedule-bot.herokuapp.com/' + TG_TOKEN)
-    return "!", 200
+# @server.route("/")
+# def webhook():
+#     bot.remove_webhook()
+#     bot.set_webhook(url='https://vtl-schedule-bot.herokuapp.com/' + TG_TOKEN)
+#     return "!", 200
 
 
-if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+# if __name__ == "__main__":
+#     server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
 # For production
 # ==============
 
 # The work of the bot itself
 # For development
-# bot.polling(none_stop=True, interval=0)
+bot.polling(none_stop=True, interval=0)
