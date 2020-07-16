@@ -4,6 +4,22 @@ Welcome to this repository! This is the [Telegram](https://telegram.org/) bot fo
 
 >[link](https://t.me/vtl_schedule_bot) to bot
 
+## Table of contents
+
+- [Motivation](#motivation)
+- [Code style](#code-style)
+- [Screenshots](#screenshots)
+- [Tech framework used](#tech-framework-used)
+- [Features](#features)
+- [Code Example](#code-example)
+- [Installation](#installation)
+- [API Reference](#api-reference)
+- [Deploy](#deploy)
+- [Contribute](#contribute)
+- [Credits](#credits)
+- [Contact](#contact)
+- [License](#license)
+
 ## Motivation
 
 It all started when I started studying at [KPI](https://kpi.ua/). Of course, in the first year it is **very difficult** to understand how studying at the university works. Just in the telegram there was a [bot](https://t.me/KPI_schedule_bot) showing the schedule. And then I had the *idea* to create the same for my school.
@@ -14,19 +30,19 @@ It all started when I started studying at [KPI](https://kpi.ua/). Of course, in 
 
 ## Screenshots
 
-![Screenshot 1](https://github.com/mezgoodle/images/blob/master/vtl-schedule-bot1.png)
+![Screenshot 1](https://raw.githubusercontent.com/mezgoodle/images/master/vtl-schedule-bot1.png)
 
-![Screenshot 2](https://github.com/mezgoodle/images/blob/master/vtl-schedule-bot2.png)
+![Screenshot 2](https://raw.githubusercontent.com/mezgoodle/images/master/vtl-schedule-bot2.png)
 
-![Screenshot 3](https://github.com/mezgoodle/images/blob/master/vtl-schedule-bot3.png)
+![Screenshot 3](https://raw.githubusercontent.com/mezgoodle/images/master/vtl-schedule-bot3.png)
 
-![Screenshot 4](https://github.com/mezgoodle/images/blob/master/vtl-schedule-bot4.png)
+![Screenshot 4](https://raw.githubusercontent.com/mezgoodle/images/master/vtl-schedule-bot4.png)
 
-![Screenshot 5](https://github.com/mezgoodle/images/blob/master/vtl-schedule-bot5.png)
+![Screenshot 5](https://raw.githubusercontent.com/mezgoodle/images/master/vtl-schedule-bot5.png)
 
-![Screenshot 6](https://github.com/mezgoodle/images/blob/master/vtl-schedule-bot6.png)
+![Screenshot 6](https://raw.githubusercontent.com/mezgoodle/images/master/vtl-schedule-bot6.png)
 
-![Screenshot 7](https://github.com/mezgoodle/images/blob/master/vtl-schedule-bot7.png)
+![Screenshot 7](https://raw.githubusercontent.com/mezgoodle/images/master/vtl-schedule-bot7.png)
 
 ## Tech framework used
 
