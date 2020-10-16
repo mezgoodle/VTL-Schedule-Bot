@@ -228,134 +228,145 @@ GROUP_DICT = {
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-    user_markup.row('Сьогодні', "Завтра")
-    bot.send_message(message.from_user.id,
-                     'Вітаємо! Це бот, що показує розклад по групам ВТЛ. Для почтаку встанови код своєї групи('
-                     '/group_[назва групи]), наприклад, /group_pm1. Потім за допомогою клавіатури або команд '
-                     'дізнавайся, який у тебе зараз урок',
-                     reply_markup=user_markup)
+    # user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+    # user_markup.row('Сьогодні', "Завтра")
+    # bot.send_message(message.from_user.id,
+    #                  'Вітаємо! Це бот, що показує розклад по групам ВТЛ. Для почтаку встанови код своєї групи('
+    #                  '/group_[назва групи]), наприклад, /group_pm1. Потім за допомогою клавіатури або команд '
+    #                  'дізнавайся, який у тебе зараз урок',
+    #                  reply_markup=user_markup)
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['stop'])
 def handle_stop(message):
-    hide_markup = telebot.types.ReplyKeyboardRemove()
-    bot.send_message(message.from_user.id, 'Клавіатуру вимкнено', reply_markup=hide_markup)
+    # hide_markup = telebot.types.ReplyKeyboardRemove()
+    # bot.send_message(message.from_user.id, 'Клавіатуру вимкнено', reply_markup=hide_markup)
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['help'])
 def handle_help(message):
-    bot.send_message(message.chat.id, """
-        /today - Розклад на сьогодні
-/tomorrow - Розклад на завтра
-/week - Розклад на тиждень
-/help - Список усіх команд
-/timetable - Розклад дзвінків
-/who - Підказує ім'я вчителя
-/group - Встановити групу
-/left - Показує скільки залишилось до кінця уроку(перерви)
-/stop - Вимкнути клавіатуру
-https://telegra.ph/Kodi-grup-dlya-vtl-schedule-bot-10-25 - Коди груп
-Якщо у розкладі є неточності, пишіть @feedback_sch_vtl_bot
-    """)
+#     bot.send_message(message.chat.id, """
+#         /today - Розклад на сьогодні
+# /tomorrow - Розклад на завтра
+# /week - Розклад на тиждень
+# /help - Список усіх команд
+# /timetable - Розклад дзвінків
+# /who - Підказує ім'я вчителя
+# /group - Встановити групу
+# /left - Показує скільки залишилось до кінця уроку(перерви)
+# /stop - Вимкнути клавіатуру
+# https://telegra.ph/Kodi-grup-dlya-vtl-schedule-bot-10-25 - Коди груп
+# Якщо у розкладі є неточності, пишіть @feedback_sch_vtl_bot
+#     """)
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['timetable'])
 def handle_timetable(message):
-    bot.send_message(message.chat.id, """
-        1. 08.00 - 08.45
-2. 08.55 - 09.40
-3. 09.50 - 10.35
-4. 10.55 - 11.40
-5. 12.00 - 12.45
-6. 13.05 - 13.50
-7. 14.00 - 14.45
-8. 14.55 - 15.40
-9. 15.50 - 16.35
-    """)
+#     bot.send_message(message.chat.id, """
+#         1. 08.00 - 08.45
+# 2. 08.55 - 09.40
+# 3. 09.50 - 10.35
+# 4. 10.55 - 11.40
+# 5. 12.00 - 12.45
+# 6. 13.05 - 13.50
+# 7. 14.00 - 14.45
+# 8. 14.55 - 15.40
+# 9. 15.50 - 16.35
+#     """)
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['today'])
 def handle_today(message):
-    if not message.from_user.id in GROUP_ID:
-        GROUP_ID[message.from_user.id] = ''
-    if GROUP_ID[message.from_user.id] != '':
-        today_schedule(message)
-    else:
-        bot.send_message(message.chat.id,
-                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    # if not message.from_user.id in GROUP_ID:
+    #     GROUP_ID[message.from_user.id] = ''
+    # if GROUP_ID[message.from_user.id] != '':
+    #     today_schedule(message)
+    # else:
+    #     bot.send_message(message.chat.id,
+    #                      'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['tomorrow'])
 def handle_tomorrow(message):
-    if not message.from_user.id in GROUP_ID:
-        GROUP_ID[message.from_user.id] = ''
-    if GROUP_ID[message.from_user.id] != '':
-        tomorrow_schedule(message)
-    else:
-        bot.send_message(message.chat.id,
-                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    # if not message.from_user.id in GROUP_ID:
+    #     GROUP_ID[message.from_user.id] = ''
+    # if GROUP_ID[message.from_user.id] != '':
+    #     tomorrow_schedule(message)
+    # else:
+    #     bot.send_message(message.chat.id,
+    #                      'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['week'])
 def handle_week(message):
-    if not message.from_user.id in GROUP_ID:
-        GROUP_ID[message.from_user.id] = ''
-    if GROUP_ID[message.from_user.id] != '':
-        week_schedule(message)
-    else:
-        bot.send_message(message.chat.id,
-                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    # if not message.from_user.id in GROUP_ID:
+    #     GROUP_ID[message.from_user.id] = ''
+    # if GROUP_ID[message.from_user.id] != '':
+    #     week_schedule(message)
+    # else:
+    #     bot.send_message(message.chat.id,
+    #                      'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['who'])
 def handle_who(message):
-    today = take_date()
-    if not message.from_user.id in GROUP_ID:
-        GROUP_ID[message.from_user.id] = ''
-    if GROUP_ID[message.from_user.id] != '':
-        if check_today(today):
-            bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
-        else:
-            who_is_now(message, today)
-    else:
-        bot.send_message(message.chat.id,
-                         'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    # today = take_date()
+    # if not message.from_user.id in GROUP_ID:
+    #     GROUP_ID[message.from_user.id] = ''
+    # if GROUP_ID[message.from_user.id] != '':
+    #     if check_today(today):
+    #         bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
+    #     else:
+    #         who_is_now(message, today)
+    # else:
+    #     bot.send_message(message.chat.id,
+    #                      'Для початку встанови код групи(/group_[назва групи]), наприклад, /group_pm1.\U0001F601')
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['group'])
 def handle_group(message):
-    bot.send_message(message.chat.id, 'Натисніть і оберіть вашу групу:', reply_markup=gen_markup())
+    # bot.send_message(message.chat.id, 'Натисніть і оберіть вашу групу:', reply_markup=gen_markup())
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(commands=['left'])
 def handle_left(message):
-    today = take_date()
-    if check_today(today):
-        bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
-        return
-    result = detect_time()
-    if isinstance(result, str):
-        bot.send_message(message.chat.id, result)
-    else:
-        bot.send_message(message.chat.id, f'До кінця {result[2]} {result[0]} хв., {result[1]} сек.')
+    # today = take_date()
+    # if check_today(today):
+    #     bot.send_message(message.chat.id, 'Сьогодні вихідний\U0001F973, відпочивай!')
+    #     return
+    # result = detect_time()
+    # if isinstance(result, str):
+    #     bot.send_message(message.chat.id, result)
+    # else:
+    #     bot.send_message(message.chat.id, f'До кінця {result[2]} {result[0]} хв., {result[1]} сек.')
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    if message.text == 'Сьогодні':
-        handle_today(message)
-        return
-    elif message.text == 'Завтра':
-        handle_tomorrow(message)
-        return
-    if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (
-            str(message.text)[-2] in LETTERS_ARRAY):
-        GROUP_ID[message.from_user.id] = GROUP_DICT[message.text]
-        bot.send_message(message.chat.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[message.text])
-    else:
-        bot.send_message(message.chat.id,
-                         'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
+    # if message.text == 'Сьогодні':
+    #     handle_today(message)
+    #     return
+    # elif message.text == 'Завтра':
+    #     handle_tomorrow(message)
+    #     return
+    # if (str(message.text)[-1].isdigit()) and (str(message.text) in GROUP_DICT) and (
+    #         str(message.text)[-2] in LETTERS_ARRAY):
+    #     GROUP_ID[message.from_user.id] = GROUP_DICT[message.text]
+    #     bot.send_message(message.chat.id, 'Вітаю! Ви встановили код групи - ' + GROUP_DICT[message.text])
+    # else:
+    #     bot.send_message(message.chat.id,
+    #                      'Надіюсь, ти правильно написав команду\U0001f600. Якщо не знаєш, що писати, переглянь /help.')
+    bot.send_message(message.from_user.id, 'Now the bot does not work ')
 
 
 @bot.callback_query_handler(func=lambda call: True)
