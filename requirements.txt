@@ -7,7 +7,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.3
 MarkupSafe==1.1.1
 pyTelegramBotAPI==3.7.6
-python-dotenv==0.15.0
+python-dotenv==0.16.0
 requests==2.25.1
 six==1.15.0
 urllib3==1.26.4
